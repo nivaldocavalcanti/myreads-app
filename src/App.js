@@ -5,12 +5,7 @@ import BookShelf from './BookShelf'
 
 class BooksApp extends React.Component {
   componentDidMount() {
-    BooksAPI.getAll()
-    .then((books) => {
-      this.setState(() => ({
-        books: books
-      }))
-    })
+    this.getBooks();
   }
 
   state = {
@@ -22,6 +17,23 @@ class BooksApp extends React.Component {
      */
     showSearchPage: false,
     books: []
+  }
+
+  getBooks = () => {
+    BooksAPI.getAll()
+    .then((books) => {
+      this.setState(() => ({
+        books: books
+      }))
+    })
+  }
+
+  changeShelf = (book,shelf) => {
+    let books = this.state.books.map(b=>{ if(b.id === book.id) b.shelf = shelf; return b; });
+    this.setState(() => ({
+      books: books
+    }))
+    BooksAPI.update(book,shelf);
   }
 
   render() {
@@ -55,9 +67,9 @@ class BooksApp extends React.Component {
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf shelfTitle="Currently Reading" books={this.state.books.filter(book=>{ return book.shelf === 'currentlyReading' })} />
-                <BookShelf shelfTitle="Want to Read" books={this.state.books.filter(book=>{ return book.shelf === 'wantToRead' })} />
-                <BookShelf shelfTitle="Read" books={this.state.books.filter(book=>{ return book.shelf === 'read' })} />
+                <BookShelf shelfTitle="Currently Reading" books={this.state.books.filter(book=>{ return book.shelf === 'currentlyReading' })} onUpdate={this.changeShelf} />
+                <BookShelf shelfTitle="Want to Read" books={this.state.books.filter(book=>{ return book.shelf === 'wantToRead' })} onUpdate={this.changeShelf} />
+                <BookShelf shelfTitle="Read" books={this.state.books.filter(book=>{ return book.shelf === 'read' })} onUpdate={this.changeShelf} />
               </div>
             </div>
             <div className="open-search">
