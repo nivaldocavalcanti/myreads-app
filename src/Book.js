@@ -24,9 +24,9 @@ class Book extends Component {
         return (
             <div className="book">
                 <div className="book-top">
-                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks.smallThumbnail})` }}></div>
+                    <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${book.imageLinks && book.imageLinks.smallThumbnail ? book.imageLinks.smallThumbnail : 'https://via.placeholder.com/128x193/?text=NO+COVER'})` }}></div>
                     <div className="book-shelf-changer">
-                        <select defaultValue={book.shelf} onChange={this.updateShelf}>
+                        <select defaultValue={book.shelf ? book.shelf : 'none'} onChange={this.updateShelf}>
                             <option value="move" disabled>Move to...</option>
                             {this.shelves.map((shelf,index)=>(
                                 <option key={index} value={shelf.val}>{shelf.name}</option>
@@ -35,7 +35,7 @@ class Book extends Component {
                     </div>
                 </div>
                 <div className="book-title">{book.title}</div>
-                {book.authors.map((author, index)=>(<div key={index} className="book-authors">{author}{index === 0 && ','}</div>))}
+                {book.authors && book.authors.map((author, index)=>(<div key={index} className="book-authors">{author}{index === 0 && ','}</div>))}
             </div>
         );
     }
