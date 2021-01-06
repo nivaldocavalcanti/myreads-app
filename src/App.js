@@ -16,13 +16,15 @@ class BooksApp extends React.Component {
     search: []
   }
 
-  getBooks = () => {
-    BooksAPI.getAll()
-    .then((books) => {
-      this.setState(() => ({
-        books: books
-      }))
-    })
+  shelves = [
+    {val: 'currentlyReading', name: 'Currently Reading'},
+    {val: 'wantToRead', name: 'Want to Read'},
+    {val: 'read', name: 'Read'}
+  ];
+
+  getBooks = async () => {
+    const books = await BooksAPI.getAll();
+    this.setState({ books });
   }
 
   changeShelf = (book,shelf) => {
@@ -61,7 +63,7 @@ class BooksApp extends React.Component {
     const { books, query, search } = this.state;
     return (
       <div className="app">
-        <Route path='/search' render={() => (
+        <Route path='/search'>
           <div className="search-books">
             <div className="search-books-bar">
               <Link to='/' className='close-search'>Close</Link>
@@ -83,24 +85,24 @@ class BooksApp extends React.Component {
               </ol>
             </div>
           </div>
-        )} />
-        <Route exact path='/' render={() => (
+        </Route>
+        <Route exact path='/'>
           <div className="list-books">
             <div className="list-books-title">
               <h1>MyReads</h1>
             </div>
             <div className="list-books-content">
               <div>
-                <BookShelf shelfTitle="Currently Reading" books={books.filter(book=>{ return book.shelf === 'currentlyReading' })} onUpdate={this.changeShelf} />
-                <BookShelf shelfTitle="Want to Read" books={books.filter(book=>{ return book.shelf === 'wantToRead' })} onUpdate={this.changeShelf} />
-                <BookShelf shelfTitle="Read" books={books.filter(book=>{ return book.shelf === 'read' })} onUpdate={this.changeShelf} />
+                {this.shelves.map((shelf,index)=>(
+                  <BookShelf key={index} shelfTitle={shelf.name} books={books.filter(book=>{ return book.shelf === shelf.val })} onUpdate={this.changeShelf} />
+                ))}
               </div>
             </div>
             <div className="open-search">
               <Link to='/search'>Add a book</Link>
             </div>
           </div>
-        )} />
+        </Route>
       </div>
     )
   }
